@@ -15,6 +15,7 @@
 }
 
 .gameContainer {
+  height: 40vw;
   margin-top: 2rem;
   /* display: flex;
   align-items: center;
@@ -44,4 +45,32 @@ button:focus {
   text-align: center;
   margin-right: -1px;
   margin-top: -1px;
+}
+
+.wordContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.letterHide {
+  margin-left: 0.2rem;
+  border: 0;
+  border-bottom: 0.1rem;
+  border-color: black;
+  border-style: solid;
+
+  font-size: 1.5rem;
+}
+
+.alphabetContainer{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.alphabetLetter {
+  margin-left: 0.5rem;
+  font-size: 1.5rem;
 }

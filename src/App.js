@@ -1,15 +1,17 @@
 import './App.css';
-import Game from './Game';
+import TicTacToe from './TicTacToe';
+import Pendu from './Pendu';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        Tic Tac Toe
+        Games
       </header>
-      <Game></Game>
+      <TicTacToe></TicTacToe>
+      <Pendu></Pendu>
     </div>
-  );
+  )
 }
 
 export default App;

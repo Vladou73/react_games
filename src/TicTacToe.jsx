@@ -43,7 +43,7 @@ export const Cell = ({handleClick, value, index}) => {
     )
 }
 
-const Game = () => {
+const TicTacToe = () => {
     const [turn, setTurn] = useState(true)
     const [grid, setGrid] = useState(Array(sideLength*sideLength).fill(null))
     const [disableReset, setDisableReset] = useState(true)
@@ -99,6 +99,7 @@ const Game = () => {
 
     return (
         <div className="gameContainer">
+            <div>Tic Tac Toe</div>
             {generateGrid()}
             <button disabled={disableReset} onClick={resetGrid} style={{marginTop:"1rem"}}>Reset game</button>
             <p hidden={!victory.victory}>{victory.winner} WON THE GAME !</p>
@@ -106,4 +107,4 @@ const Game = () => {
     )
 }
 
-export default Game;
+export default TicTacToe;
