@@ -1,5 +1,3 @@
-import TicTacToe from './TicTacToe';
-import Hangman from './Hangman';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -10,6 +8,7 @@ const Home = () => {
                 <ul>
                     <li><Link to={"/tictactoe"}>Tic Tac Toe</Link></li>
                     <li><Link to={"/hangman"}>Hangman</Link></li>
+                    <li><Link to={"/starwars"}>Star Wars</Link></li>
                 </ul>
             </nav>
       </div>

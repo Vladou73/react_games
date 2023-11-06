@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const sideLength = 4;
 const checkLines = (grid) => {
