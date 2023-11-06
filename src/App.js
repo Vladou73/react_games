@@ -1,16 +1,17 @@
 import './App.css';
+import {Routes, Route} from "react-router-dom"
+
+import Home from "./Home"
 import TicTacToe from './TicTacToe';
-import Pendu from './Pendu';
+import Hangman from './Hangman';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        Games
-      </header>
-      <TicTacToe></TicTacToe>
-      <Pendu></Pendu>
-    </div>
+    <Routes>
+      <Route path="/" element ={<Home />}/>
+      <Route path="/tictactoe" element ={<TicTacToe />}/>
+      <Route path="/hangman" element ={<Hangman />}/>
+    </Routes>
   )
 }
 

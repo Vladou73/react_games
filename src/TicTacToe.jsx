@@ -99,7 +99,7 @@ const TicTacToe = () => {
 
     return (
         <div className="gameContainer">
-            <div>Tic Tac Toe</div>
+            <header>Tic Tac Toe</header>
             {generateGrid()}
             <button disabled={disableReset} onClick={resetGrid} style={{marginTop:"1rem"}}>Reset game</button>
             <p hidden={!victory.victory}>{victory.winner} WON THE GAME !</p>
