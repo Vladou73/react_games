@@ -7,15 +7,30 @@ import axios from "axios"
 const StarWars = () => {
     const [people, setPeople] = useState([])
     const [genderData, setGenderData] = useState([])
-
+    const [maleFilmData, setMaleFilmData] = useState([])
+    const [femaleFilmData, setFemaleFilmData] = useState([])
 
     const setChartsData = (peopleData) => {
         let genderTmp = []
-        genderTmp.push({name: "Male", y: peopleData.filter(e=>e.gender === "male").length / peopleData.length})
-        genderTmp.push({name: "Female", y: peopleData.filter(e=>e.gender === "female").length / peopleData.length})
-        genderTmp.push({name: "n/a", y: peopleData.filter(e=>e.gender === "n/a").length / peopleData.length})
-        genderTmp.push({name: "hermaphrodite", y: peopleData.filter(e=>e.gender === "hermaphrodite").length / peopleData.length})
+
+        let males = peopleData.filter(e=>e.gender === "male");
+        let females = peopleData.filter(e=>e.gender === "female")
+        let undefs = peopleData.filter(e=>e.gender === "n/a")
+        let herma = peopleData.filter(e=>e.gender === "hermaphrodite")
+
+        genderTmp.push({name: "Male", y: males.length / peopleData.length})
+        genderTmp.push({name: "Female", y: females.length / peopleData.length})
+        genderTmp.push({name: "n/a", y: undefs.length / peopleData.length})
+        genderTmp.push({name: "hermaphrodite", y: herma.length / peopleData.length})
         setGenderData(genderTmp)
+
+        let maleCounts = males.map(e => e.films.length).sort();
+        const maleMap = maleCounts.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
+        setMaleFilmData([...maleMap.values()])
+        
+        let femaleCounts = females.map(e => e.films.length).sort();
+        const femaleMap = femaleCounts.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
+        setFemaleFilmData([...femaleMap.values()])
     }
 
     useEffect(()=>{
@@ -69,6 +84,43 @@ const StarWars = () => {
         }]
     }
 
+    const filmOptions = {
+    chart: {type: 'area'},
+    title: {text: 'Gender distribution and films'},
+    xAxis: {
+        allowDecimals: false,
+        title: {text: "Star Wars films"}
+    },
+    yAxis: {
+        title: {text: 'Star Wars characters appearing'}
+    },
+    tooltip: {
+        pointFormat: '<b>{point.y:,.0f}</b> {series.name} characters <br/>appear in {point.x} films'
+    },
+    plotOptions: {
+        area: {
+            pointStart: 1,
+            marker: {
+                enabled: false,
+                symbol: 'circle',
+                radius: 2,
+                states: {
+                    hover: {
+                        enabled: true
+                    }
+                }
+            }
+        }
+    },
+    series: [{
+        name: 'Males',
+        data: maleFilmData
+    }, {
+        name: 'Females',
+        data: femaleFilmData
+    }]
+};
+
     return (
         <div className="gameContainer">
             <header>STAR WARS</header>
@@ -79,7 +131,7 @@ const StarWars = () => {
                 />
                 <HighchartsReact
                     highcharts={Highcharts}
-                    options={genderOptions}
+                    options={filmOptions}
                 />
 
             </div>}
