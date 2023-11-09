@@ -47,14 +47,17 @@ const StarWars = () => {
         setFemaleFilmData([...femaleMap.values()])
     }
 
-    const updateFilmSeries = () => {
-        let tmp = []
-        if (controls.male)
-            tmp.push({name: 'Male', data: maleFilmData});
-        if (controls.female)
-            tmp.push({name: 'Female', data: femaleFilmData});
-        setFilmSeries([...tmp])
-    }
+    useEffect(()=>{
+        const updateFilmSeries = () => {
+            let tmp = []
+            if (controls.male)
+                tmp.push({name: 'Male', data: maleFilmData});
+            if (controls.female)
+                tmp.push({name: 'Female', data: femaleFilmData});
+            setFilmSeries([...tmp])
+        }
+        updateFilmSeries()
+    },[maleFilmData, femaleFilmData])
 
     const setChartsData = (peopleData) => {
         let filtered = {}
@@ -64,7 +67,6 @@ const StarWars = () => {
 
         updateGenderData(filtered);
         updateFilmData(filtered);
-        updateFilmSeries();
     }
 
     useEffect(()=>{
@@ -156,16 +158,16 @@ const StarWars = () => {
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={genderOptions}
-                        />
-                    <HighchartsReact
+                    />
+                    {filmSeries && <HighchartsReact
                         highcharts={Highcharts}
                         options={filmOptions}
-                        />
+                    />}
                 </div>
                 <FormGroup>
-                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.male} onChange={(e)=>handleControlChange(e, "male")}/>} label="male" />
-                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.female} onChange={(e)=>handleControlChange(e, "female")}/>} label="female" />
-                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.other} onChange={(e)=>handleControlChange(e, "other")}/>} label="other" />
+                    <FormControlLabel control={<Checkbox checked={controls.male} onChange={(e)=>handleControlChange(e, "male")}/>} label="male" />
+                    <FormControlLabel control={<Checkbox checked={controls.female} onChange={(e)=>handleControlChange(e, "female")}/>} label="female" />
+                    <FormControlLabel control={<Checkbox checked={controls.other} onChange={(e)=>handleControlChange(e, "other")}/>} label="other" />
                 </FormGroup>
             </div> : <p>loading data ...</p>}
 
