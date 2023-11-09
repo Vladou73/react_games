@@ -2,6 +2,7 @@ import HighchartsReact from "highcharts-react-official"
 import Highcharts from "highcharts"
 import { useEffect, useState } from "react"
 import axios from "axios"
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 
 const StarWars = () => {
@@ -9,28 +10,61 @@ const StarWars = () => {
     const [genderData, setGenderData] = useState([])
     const [maleFilmData, setMaleFilmData] = useState([])
     const [femaleFilmData, setFemaleFilmData] = useState([])
+    const [filmSeries, setFilmSeries] = useState([])
 
-    const setChartsData = (peopleData) => {
+    const [controls, setControls] = useState({"male":true, "female": true, "other": true});
+
+    const handleControlChange = (event, gender) => {
+        let tmp = controls;
+        tmp[gender] = event.target.checked 
+        setControls(tmp);
+        setChartsData(people);
+    };
+
+    const updateGenderData = (filtered) => {
+        let length = 0;
+        for (const [key, value] of Object.entries(filtered)) {
+            if (controls[key])
+                length += filtered[key].length
+        }
         let genderTmp = []
-
-        let males = peopleData.filter(e=>e.gender === "male");
-        let females = peopleData.filter(e=>e.gender === "female")
-        let undefs = peopleData.filter(e=>e.gender === "n/a")
-        let herma = peopleData.filter(e=>e.gender === "hermaphrodite")
-
-        genderTmp.push({name: "Male", y: males.length / peopleData.length})
-        genderTmp.push({name: "Female", y: females.length / peopleData.length})
-        genderTmp.push({name: "n/a", y: undefs.length / peopleData.length})
-        genderTmp.push({name: "hermaphrodite", y: herma.length / peopleData.length})
+        if (controls.male)
+            genderTmp.push({name: "Male", y: filtered.male.length / length})
+        if (controls.female)
+            genderTmp.push({name: "Female", y: filtered.female.length / length})
+        if (controls.other)
+            genderTmp.push({name: "Other", y: filtered.other.length / length})
         setGenderData(genderTmp)
+    }
 
-        let maleCounts = males.map(e => e.films.length).sort();
+    const updateFilmData = (filtered) => {
+        let maleCounts = filtered.male.map(e => e.films.length).sort();
         const maleMap = maleCounts.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
         setMaleFilmData([...maleMap.values()])
         
-        let femaleCounts = females.map(e => e.films.length).sort();
+        let femaleCounts = filtered.female.map(e => e.films.length).sort();
         const femaleMap = femaleCounts.reduce((acc, e) => acc.set(e, (acc.get(e) || 0) + 1), new Map())
         setFemaleFilmData([...femaleMap.values()])
+    }
+
+    const updateFilmSeries = () => {
+        let tmp = []
+        if (controls.male)
+            tmp.push({name: 'Male', data: maleFilmData});
+        if (controls.female)
+            tmp.push({name: 'Female', data: femaleFilmData});
+        setFilmSeries([...tmp])
+    }
+
+    const setChartsData = (peopleData) => {
+        let filtered = {}
+        filtered["male"] = peopleData.filter(e=>e.gender === "male");
+        filtered["female"] = peopleData.filter(e=>e.gender === "female");
+        filtered["other"] = peopleData.filter(e=>e.gender === "n/a" || e.gender === "hermaphrodite")
+
+        updateGenderData(filtered);
+        updateFilmData(filtered);
+        updateFilmSeries();
     }
 
     useEffect(()=>{
@@ -60,14 +94,13 @@ const StarWars = () => {
             type: 'pie'
         },
         title: {
-            text: "Gender distribution on " + people.length + " characters"
+            text: "Gender distribution with " + people.length + " characters"
         },
         tooltip: {
             valueDecimals: 2,
             valueSuffix: '%'
         },
         plotOptions: {
-
             series: {
                 allowPointSelect: true,
                 cursor: "pointer",
@@ -86,7 +119,7 @@ const StarWars = () => {
 
     const filmOptions = {
     chart: {type: 'area'},
-    title: {text: 'Gender distribution and films'},
+    title: {text: 'Gender distribution in films'},
     xAxis: {
         allowDecimals: false,
         title: {text: "Star Wars films"}
@@ -112,29 +145,29 @@ const StarWars = () => {
             }
         }
     },
-    series: [{
-        name: 'Males',
-        data: maleFilmData
-    }, {
-        name: 'Females',
-        data: femaleFilmData
-    }]
+    series: filmSeries
 };
 
     return (
         <div className="gameContainer">
-            <header>STAR WARS</header>
-            {people.length && <div>
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={genderOptions}
-                />
-                <HighchartsReact
-                    highcharts={Highcharts}
-                    options={filmOptions}
-                />
-
-            </div>}
+            <header className="star_wars_header">STAR WARS DATA</header>
+            {people.length ? <div style={{"display": "flex"}}>
+                <div style={{width: "75%"}}>
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={genderOptions}
+                        />
+                    <HighchartsReact
+                        highcharts={Highcharts}
+                        options={filmOptions}
+                        />
+                </div>
+                <FormGroup>
+                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.male} onChange={(e)=>handleControlChange(e, "male")}/>} label="male" />
+                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.female} onChange={(e)=>handleControlChange(e, "female")}/>} label="female" />
+                    <FormControlLabel control={<Checkbox defaultChecked checked={controls.other} onChange={(e)=>handleControlChange(e, "other")}/>} label="other" />
+                </FormGroup>
+            </div> : <p>loading data ...</p>}
 
         </div>
     )
